@@ -7,14 +7,41 @@
     <title>Document</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
         integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
 
-    
     <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
     <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
-    
+
     <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let rate = response[1]["rate"];
+                    console.log(rate);
+                    $('#ex_rate').append(rate);
+                },
+            });
+        });
         function buy() {
-            alert('주문이 완료되었습니다.');
+            if (!$('#name').val()) {
+                alert("이름을 입력해 주세요!");
+            }
+            else if ($('#inputGroupSelect01').val() == 0) {
+                alert("수량을 선택해 주세요!");
+            }
+            else if (!$('#address').val()) {
+                alert("주소를 입력해 주세요!");
+            }
+            else if (!$('#phone').val()) {
+                alert("전화번호를 입력해 주세요!");
+            }
+            else {
+                alert('주문이 완료되었습니다.');
+            }
+
         }
 
     </script>
@@ -46,18 +73,24 @@
         }
 
         .space {
-            margin: 15px 0 15px 0;
+            margin: 15px 0 0 0;
         }
 
         .firstFont {
             font-family: 'Gamja Flower', cursive;
             font-weight: bold;
         }
-        .secondFont{
+
+        .secondFont {
             font-family: 'Song Myung', serif;
         }
 
-        .secondFont {}
+        .dollar {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 25px;
+            font-weight: bold;
+            color : orange;
+        }
     </style>
 </head>
 
@@ -73,19 +106,23 @@
             <p class="explain">열대성 과일의 향기와 신비로움으로 깔끔한 주스와 같은 느낌을 가진 커피. 주로 상큼하고 깔끔한 맛과 함께 자몽과 와인의 풍미를 지니며 입안에 꽉찬 무게감을
                 가진다.</p>
         </div>
-        <div>
+        <div class="space">
+            <span id="ex_rate" class="dollar">달러-원 환율 : </span>
+        </div>
+        <div class="space">
             <div class="input-group mb-3 firstFont">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroup-sizing-sm">주문자 이름</span>
                 </div>
-                <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                <input id="name" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
             </div>
             <div class="input-group mb-3 firstFont">
                 <div class="input-group-prepend">
                     <label class="input-group-text" for="inputGroupSelect01">수량</label>
                 </div>
                 <select class="custom-select" id="inputGroupSelect01">
-                    <option selected>-- 수량을 선택하세요 --</option>
+                    <option selected value="0">-- 수량을 선택하세요 --</option>
                     <option value="1">1</option>
                     <option value="2">2</option>
                     <option value="3">3</option>
@@ -96,13 +133,15 @@
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroup-sizing-sm">주소</span>
                 </div>
-                <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                <input id="address" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
             </div>
             <div class="input-group  mb-3 firstFont">
                 <div class="input-group-prepend">
                     <span class="input-group-text" id="inputGroup-sizing-sm">전화번호</span>
                 </div>
-                <input type="text" class="form-control" aria-label="Small" aria-describedby="inputGroup-sizing-sm">
+                <input id="phone" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
             </div>
             <p class="lead picture secondFont">
                 <a onclick="buy()" class="btn btn-primary btn-lg" href="#" role="button">주문하기</a>
