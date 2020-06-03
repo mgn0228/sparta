@@ -39,7 +39,23 @@
                 alert("전화번호를 입력해 주세요!");
             }
             else {
-                alert('주문이 완료되었습니다.');
+                let phone_number = $('#phone').val()
+                let twobar = phone_number.match(/-/g)
+                if (twobar != '-,-'){
+                    alert(twobar);
+                }
+                else {
+                    let divinumber = phone_number.split('-')
+                    if(divinumber[0]=='010'&&divinumber[1].length==4&&divinumber[2].length==4){
+                        alert('주문이 완료되었습니다.')
+                    }
+                    else if(divinumber[0]=='010'&&divinumber[1].length==3&&divinumber[2].length==4){
+                        alert('주문이 완료되었습니다.')
+                    }
+                    else{
+                        alert(divinumber);
+                    }
+                }
             }
         }
 
@@ -88,7 +104,7 @@
             font-family: 'Gamja Flower', cursive;
             font-size: 25px;
             font-weight: bold;
-            color : orange;
+            color: orange;
         }
     </style>
 </head>

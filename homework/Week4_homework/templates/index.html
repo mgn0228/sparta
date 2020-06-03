@@ -1,0 +1,334 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css"
+        integrity="sha384-Gn5384xqQ1aoWXA+058RXPxPg6fy4IWvTNh0E263XmFcJlSAwiGgFAW/dAiS6JXm" crossorigin="anonymous">
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.4.1/jquery.min.js"></script>
+
+    <link href="https://fonts.googleapis.com/css2?family=Gamja+Flower&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Song+Myung&display=swap" rel="stylesheet">
+
+    <script>
+        $(document).ready(function () {
+            $.ajax({
+                type: "GET",
+                url: "https://api.manana.kr/exchange/rate.json",
+                data: {},
+                success: function (response) {
+                    let rate = response[1]["rate"];
+                    console.log(rate);
+                    $('#ex_rate').append(rate);
+                },
+            });
+            $('#orders-box').html('');
+            listing();
+        });
+        function listing() {
+            $.ajax({
+                type: "GET",
+                url: "/order",
+                data: {},
+                success: function (response) {
+                    if (response['result'] == 'success') {
+                        let orders = response['orders']
+                        for (let i = 0; i < orders.length; i++) {
+                            let name = orders[i]['name']
+                            let amount = orders[i]['amount']
+                            let address = orders[i]['address']
+                            let phone = orders[i]['phone']
+                            make_card(name, amount, address, phone)
+                        }
+                    }
+                }
+            })
+        }
+        function make_card(name, amount, address, phone) {
+            let temp_html = `<tr>
+                                 <td class="name2">${name}</td>
+                                 <td class="amount2">${amount}</td>
+                                 <td class="address2">${address}</td>
+                                 <td class="phone2">${phone}</td>
+                             </tr>`
+            $('#orders-box').append(temp_html)
+        }
+        function buy() {
+            let name = $('#name').val()
+            let amount = $('#inputGroupSelect01').val()
+            let address = $('#address').val()
+            let phone = $('#phone').val()
+            if (!$('#name').val()) {
+                alert("이름을 입력해 주세요!");
+            }
+            else if ($('#inputGroupSelect01').val() == 0) {
+                alert("수량을 선택해 주세요!");
+            }
+            else if (!$('#address').val()) {
+                alert("주소를 입력해 주세요!");
+            }
+            else if (!$('#phone').val()) {
+                alert("전화번호를 입력해 주세요!");
+            }
+            else {
+                let phone_number = $('#phone').val()
+                let twobar = phone_number.match(/-/g)
+                if (twobar != '-,-') {
+                    alert('010-xxxx-xxxx 형식에 맞춰 번호를 입력해 주세요!');
+                }
+                else {
+                    let divinumber = phone_number.split('-')
+                    if (divinumber[0] == '010' && divinumber[1].length == 4 && divinumber[2].length == 4) {
+                        alert('주문이 완료되었습니다.')
+                        $.ajax({
+                            type: "POST",
+                            url: "/order",
+                            data: { name_give: name, amount_give: amount, address_give: address, phone_give: phone },
+                            success: function (response) { // 성공하면
+                                if (response['result'] == 'success') {
+                                    window.location.reload()
+                                }
+                            }
+                        })
+                    }
+                    else if (divinumber[0] == '010' && divinumber[1].length == 3 && divinumber[2].length == 4) {
+                        alert('주문이 완료되었습니다.')
+                        $.ajax({
+                            type: "POST",
+                            url: "/order",
+                            data: { name_give: name, amount_give: amount, address_give: address, phone_give: phone },
+                            success: function (response) { // 성공하면
+                                if (response['result'] == 'success') {
+                                    window.location.reload()
+                                }
+                            }
+                        })
+                    }
+                    else {
+                        alert('010-xxxx-xxxx 형식에 맞춰 번호를 입력해 주세요!');
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        ul li {
+            list-style: none
+        }
+
+        .wrap {
+            width: 450px;
+            margin: 0 auto;
+        }
+
+        .picture {
+            text-align: center;
+        }
+
+        .starbucks {
+            font-size: 32px;
+            font-weight: bold;
+        }
+
+        .price {
+            font-size: 21px;
+            font-family: 'Gamja Flower', cursive;
+            font-weight: bold;
+        }
+
+        .explain {
+            text-align: left;
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+        }
+
+        .space {
+            margin: 15px 0 0 0;
+        }
+
+        .firstFont {
+            font-family: 'Gamja Flower', cursive;
+            font-weight: bold;
+        }
+
+        .secondFont {
+            font-family: 'Song Myung', serif;
+        }
+
+        .dollar {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 25px;
+            font-weight: bold;
+            color: orange;
+        }
+
+        .board {
+            width: 100%;
+            border-top: 2px solid;
+            border-color: aqua;
+        }
+
+        .name {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            font-weight: bold;
+            width: 80px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        .amount {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            font-weight: bold;
+            width: 50px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        .address {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            font-weight: bold;
+            width: 150px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        .phone {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            font-weight: bold;
+            width: 120px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+        }
+
+        .name2 {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            width: 80px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            border-top: 2px solid;
+            border-color: aqua;
+        }
+
+        .amount2 {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            width: 50px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            border-top: 2px solid;
+            border-color: aqua;
+        }
+
+        .address2 {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            width: 150px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            border-top: 2px solid;
+            border-color: aqua;
+        }
+
+        .phone2 {
+            font-family: 'Gamja Flower', cursive;
+            font-size: 18px;
+            text-align: left;
+            width: 120px;
+            padding-top: 7px;
+            padding-bottom: 7px;
+            border-top: 2px solid;
+            border-color: aqua;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="wrap">
+        <div class="picture">
+            <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn%3AANd9GcT-2sn335NNV4np_XIFVMANG2fdWboXjV0c4FZTrwpQSh-X7mwe&usqp=CAU"
+                width="300">
+        </div>
+        <div class="space">
+            <span class="starbucks">스타벅스 원두커피 </span>
+            <span class="price">가격 : 20000원 / 개</span>
+            <p class="explain">열대성 과일의 향기와 신비로움으로 깔끔한 주스와 같은 느낌을 가진 커피. 주로 상큼하고 깔끔한 맛과 함께 자몽과 와인의 풍미를 지니며 입안에 꽉찬 무게감을
+                가진다.</p>
+        </div>
+        <div class="space">
+            <span id="ex_rate" class="dollar">달러-원 환율 : </span>
+        </div>
+        <div class="space">
+            <div class="input-group mb-3 firstFont">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">주문자 이름</span>
+                </div>
+                <input id="name" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
+            </div>
+            <div class="input-group mb-3 firstFont">
+                <div class="input-group-prepend">
+                    <label class="input-group-text" for="inputGroupSelect01">수량</label>
+                </div>
+                <select class="custom-select" id="inputGroupSelect01">
+                    <option selected value="0">-- 수량을 선택하세요 --</option>
+                    <option value="1">1</option>
+                    <option value="2">2</option>
+                    <option value="3">3</option>
+                    <option value="4">4</option>
+                </select>
+            </div>
+            <div class="input-group  mb-3 firstFont">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">주소</span>
+                </div>
+                <input id="address" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
+            </div>
+            <div class="input-group  mb-3 firstFont">
+                <div class="input-group-prepend">
+                    <span class="input-group-text" id="inputGroup-sizing-sm">전화번호</span>
+                </div>
+                <input id="phone" type="text" class="form-control" aria-label="Small"
+                    aria-describedby="inputGroup-sizing-sm">
+            </div>
+            <p class="lead picture secondFont">
+                <a onclick="buy()" class="btn btn-primary btn-lg" href="#" role="button">주문하기</a>
+            </p>
+        </div>
+        <table class="board">
+            <tr>
+                <td class="name">이름</td>
+                <td class="amount">수량</td>
+                <td class="address">주소</td>
+                <td class="phone">전화번호</td>
+            </tr>
+        </table>
+        <table class="board" id="orders-box">
+            <tr>
+                <td class="name2">이름</td>
+                <td class="amount2">수량</td>
+                <td class="address2">주소</td>
+                <td class="phone2">전화번호</td>
+            </tr>
+        </table>
+    </div>
+
+
+
+</body>
+
+</html>
